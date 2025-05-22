@@ -20,9 +20,24 @@ const attendanceSchema = z.object({
     .max(120, 'Age must be 120 or less')
 })
 
+const attendanceFilterSchema = z.object({
+  name: z.string().optional()
+})
+
 // Get all attendances
-attendanceRouter.get('/', c => {
-  return c.json(getAllAttendances())
+attendanceRouter.get('/', zValidator('query', attendanceFilterSchema), c => {
+  const nameFilter = c.req.query('name')?.toLowerCase()
+  const attendances = getAllAttendances()
+
+  if (nameFilter) {
+    return c.json(
+      attendances.filter(attendance =>
+        attendance.name.toLowerCase().includes(nameFilter)
+      )
+    )
+  }
+
+  return c.json(attendances)
 })
 
 // Get attendance by ID

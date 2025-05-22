@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
+import { Container, Row, Col, FormControl } from 'react-bootstrap'
 import { AttendanceInput } from './components/AttendanceInput'
 import { AttendanceList } from './components/AttendanceList'
 import type { Attendance } from '../../server/data'
@@ -11,20 +11,37 @@ const client = hc<AppType>('http://localhost:3000/')
 
 function App() {
   const [attendances, setAttendances] = useState<Attendance[]>([])
+  const [nameFilter, setNameFilter] = useState('')
 
-  useEffect(() => {
-    fetchAttendances()
-  }, [])
-
-  const fetchAttendances = async () => {
+  const fetchAttendances = async (filterValue?: string) => {
     try {
       // @ts-expect-error client is not typed
-      const response = await client.api.attendances.$get()
+      const response = await client.api.attendances.$get({
+        query: filterValue ? { name: filterValue } : undefined
+      })
       const data = await response.json()
       setAttendances(data)
     } catch (error) {
       console.error('Error fetching attendances:', error)
     }
+  }
+
+  // Add debounced effect for search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchAttendances(nameFilter)
+    }, 2000)
+
+    return () => clearTimeout(timeoutId)
+  }, [nameFilter]) // Only re-run when nameFilter changes
+
+  // Initial fetch
+  useEffect(() => {
+    fetchAttendances()
+  }, [])
+
+  const handleFilterChange = (value: string) => {
+    setNameFilter(value)
   }
 
   const handleSubmit = async (name: string, age: number) => {
@@ -70,6 +87,13 @@ function App() {
         <Col xs={12} md={8} lg={6} style={{ width: '800px' }}>
           <h2 className="text-center mb-4">Attendances</h2>
           <AttendanceInput onSubmit={handleSubmit} />
+          <FormControl
+            type="text"
+            placeholder="Filter by name"
+            value={nameFilter}
+            onChange={e => handleFilterChange(e.target.value)}
+            className="mb-3"
+          />
           <AttendanceList attendances={attendances} onDelete={handleDelete} />
         </Col>
       </Row>
