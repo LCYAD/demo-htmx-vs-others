@@ -1,34 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import { Container, Row, Col } from 'react-bootstrap'
+import { AttendanceInput } from './components/AttendanceInput'
+import { AttendanceList } from './components/AttendanceList'
+import type { Attendance } from '../../server/data'
+import { hc } from 'hono/client'
+import type { AppType } from '../../server'
 import './App.css'
 
+const client = hc<AppType>('http://localhost:3000/')
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [attendances, setAttendances] = useState<Attendance[]>([])
+
+  useEffect(() => {
+    fetchAttendances()
+  }, [])
+
+  const fetchAttendances = async () => {
+    try {
+      // @ts-expect-error client is not typed
+      const response = await client.api.attendances.$get()
+      const data = await response.json()
+      setAttendances(data)
+    } catch (error) {
+      console.error('Error fetching attendances:', error)
+    }
+  }
+
+  const handleSubmit = async (name: string, age: number) => {
+    try {
+      // @ts-expect-error client is not typed
+      const response = await client.api.attendances.$post({
+        json: { name, age }
+      })
+
+      if (response.ok) {
+        fetchAttendances()
+      } else {
+        const error = await response.json()
+        console.log(error.error.issues[0].message)
+        alert(error?.error?.issues[0]?.message ?? 'Failed to add attendance')
+      }
+    } catch (error) {
+      console.error('Error adding attendance:', error)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    try {
+      // @ts-expect-error client is not typed
+      const response = await client.api.attendances[':id'].$delete({
+        param: { id: id }
+      })
+
+      if (response.ok) {
+        fetchAttendances()
+      } else {
+        const error = await response.json()
+        alert(error.error || 'Failed to delete attendance')
+      }
+    } catch (error) {
+      console.error('Error deleting attendance:', error)
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount(count => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Container fluid>
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6} style={{ width: '800px' }}>
+          <h2 className="text-center mb-4">Attendances</h2>
+          <AttendanceInput onSubmit={handleSubmit} />
+          <AttendanceList attendances={attendances} onDelete={handleDelete} />
+        </Col>
+      </Row>
+    </Container>
   )
 }
 

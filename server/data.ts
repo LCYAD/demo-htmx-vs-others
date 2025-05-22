@@ -1,4 +1,4 @@
-type Attendance = {
+export type Attendance = {
   id: number
   name: string
   age: number
@@ -20,8 +20,10 @@ export const getAttendanceById = (id: number): Attendance | undefined => {
 
 // Get next ID
 const getNextId = (): number => {
-  const maxId = attendances.reduce((max, attendance) => 
-    Math.max(max, attendance.id), 0)
+  const maxId = attendances.reduce(
+    (max, attendance) => Math.max(max, attendance.id),
+    0
+  )
   return maxId + 1
 }
 
@@ -56,4 +58,4 @@ export const removeAttendance = (id: number): boolean => {
   const initialLength = attendances.length
   attendances = attendances.filter(attendance => attendance.id !== id)
   return attendances.length !== initialLength
-} 
+}
