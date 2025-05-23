@@ -83,6 +83,25 @@ function App() {
     }
   }
 
+  const handleUpdate = async (id: number, name: string, age: number) => {
+    try {
+      // @ts-expect-error client is not typed
+      const response = await client.api.attendances[':id'].$put({
+        param: { id },
+        json: { name, age }
+      })
+
+      if (response.ok) {
+        fetchAttendances(nameFilter)
+      } else {
+        const error = await response.json()
+        alert(error?.error?.issues?.[0]?.message ?? 'Failed to update attendance')
+      }
+    } catch (error) {
+      console.error('Error updating attendance:', error)
+    }
+  }
+
   return (
     <Container fluid>
       <Row className="justify-content-center">
@@ -95,7 +114,11 @@ function App() {
             onChange={e => handleFilterChange(e.target.value)}
             className="mb-3"
           />
-          <AttendanceList attendances={attendances} onDelete={handleDelete} />
+          <AttendanceList
+            attendances={attendances}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+          />
           <AttendanceInput onSubmit={handleSubmit} />
         </Col>
       </Row>
