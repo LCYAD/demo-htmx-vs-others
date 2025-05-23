@@ -16,7 +16,9 @@ export function AttendanceList({
       style={{
         width: '100%',
         border: '2px solid #dee2e6',
-        marginTop: '20px'
+        borderRadius: '10px',
+        marginTop: '20px',
+        padding: '20px'
       }}
     >
       <thead>

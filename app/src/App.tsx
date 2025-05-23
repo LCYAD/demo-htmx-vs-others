@@ -71,6 +71,7 @@ function App() {
       })
 
       if (response.ok) {
+        setNameFilter('')
         fetchAttendances()
       } else {
         const error = await response.json()
@@ -84,9 +85,8 @@ function App() {
   return (
     <Container fluid>
       <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={6} style={{ width: '800px' }}>
+        <Col xs={12} md={8} lg={6} style={{ width: '800px', height: '100vh' }}>
           <h2 className="text-center mb-4">Attendances</h2>
-          <AttendanceInput onSubmit={handleSubmit} />
           <FormControl
             type="text"
             placeholder="Filter by name"
@@ -95,6 +95,7 @@ function App() {
             className="mb-3"
           />
           <AttendanceList attendances={attendances} onDelete={handleDelete} />
+          <AttendanceInput onSubmit={handleSubmit} />
         </Col>
       </Row>
     </Container>
