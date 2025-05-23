@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import attendanceRouter from './routers/attendance'
+import htmxRouter from './routers/htmx'
 
 const app = new Hono()
 
@@ -18,6 +19,7 @@ app.use(
 const port = 3000
 
 app.route('/api/attendances', attendanceRouter)
+app.route('/htmx', htmxRouter)
 
 serve(app, () => {
   console.log(`Server is running on port ${port}`)

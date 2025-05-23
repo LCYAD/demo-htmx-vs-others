@@ -33,7 +33,7 @@ export function AttendanceList({
           <tr key={attendance.id}>
             <td style={{ textAlign: 'center' }}>{attendance.name}</td>
             <td style={{ textAlign: 'center' }}>{attendance.age}</td>
-            <td>
+            <td style={{ textAlign: 'center' }}>
               <Button
                 variant="danger"
                 size="sm"
