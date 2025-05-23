@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Form, Button, InputGroup } from 'react-bootstrap'
+import { Form, Button, InputGroup, FormControl } from 'react-bootstrap'
 
 export function AttendanceInput({
   onSubmit
@@ -20,7 +20,7 @@ export function AttendanceInput({
 
   return (
     <>
-      <h2 className="text-center mb-4">Who is going to attend?</h2>
+      <h2 className="mb-4">Who is going to attend?</h2>
       <div
         style={{
           marginTop: '20px',
@@ -30,31 +30,39 @@ export function AttendanceInput({
           padding: '20px'
         }}
       >
-        <div style={{ padding: '20px' }}>
-          <Form onSubmit={handleSubmit}>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-                style={{ width: '30%', margin: '0px 10px', height: '30px' }}
-              />
-              <Form.Control
-                type="number"
-                placeholder="Age"
-                value={age}
-                onChange={e => setAge(e.target.value)}
-                required
-                style={{ width: '30%', margin: '0px 10px', height: '30px' }}
-              />
-              <Button type="submit" variant="primary">
-                Add
-              </Button>
-            </InputGroup>
-          </Form>
-        </div>
+        <Form
+          onSubmit={handleSubmit}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            marginTop: '10px'
+          }}
+        >
+          <InputGroup className="mb-3">
+            <FormControl
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              style={{ margin: '0px 10px' }}
+            />
+            <FormControl
+              type="number"
+              placeholder="Age"
+              value={age}
+              onChange={e => setAge(e.target.value)}
+              required
+              min={0}
+              max={120}
+              style={{ margin: '0px 10px' }}
+            />
+            <Button type="submit" variant="primary">
+              Add
+            </Button>
+          </InputGroup>
+        </Form>
       </div>
     </>
   )

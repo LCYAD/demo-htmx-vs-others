@@ -6,6 +6,7 @@ import type { Attendance } from '../../server/data'
 import { hc } from 'hono/client'
 import type { AppType } from '../../server'
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const client = hc<AppType>('http://localhost:3000/')
 
@@ -86,7 +87,7 @@ function App() {
     <Container fluid>
       <Row className="justify-content-center">
         <Col xs={12} md={8} lg={6} style={{ width: '800px', height: '100vh' }}>
-          <h2 className="text-center mb-4">Attendances</h2>
+          <h2 className="mb-4">Attendances</h2>
           <FormControl
             type="text"
             placeholder="Filter by name"
